@@ -59,6 +59,8 @@ export interface VerifyResponses {
     publicKey: string;
     token: string;
     type: string;
+    company_id: string;
+    apiKey: string;
   }
 }
 

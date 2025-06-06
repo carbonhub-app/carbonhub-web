@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# CarbonHub Frontend
 
-## Getting Started
+CarbonHub is a modern web application built with Next.js that provides a platform for carbon credit trading and management. This repository contains the frontend implementation of the CarbonHub platform.
 
-First, run the development server:
+## 🌟 Features
 
+- Modern and responsive user interface
+- Real-time carbon credit trading
+- Solana blockchain integration
+- Interactive charts and data visualization
+- Dark/Light theme support
+- Form validation and handling
+- Toast notifications
+- Beautiful animations and transitions
+
+## 🛠️ Tech Stack
+
+### Core Technologies
+- **Framework**: [Next.js 15.3.2](https://nextjs.org/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **UI Library**: [React 19](https://reactjs.org/)
+- **Styling**: [TailwindCSS](https://tailwindcss.com/)
+
+### UI Components
+- [Radix UI](https://www.radix-ui.com/) - Unstyled, accessible components
+- [Lucide React](https://lucide.dev/) - Beautiful icons
+- [Framer Motion](https://www.framer.com/motion/) - Animations
+- [Recharts](https://recharts.org/) - Data visualization
+- [React Hook Form](https://react-hook-form.com/) - Form handling
+- [Zod](https://zod.dev/) - Schema validation
+
+### Blockchain Integration
+- [Solana Web3.js](https://solana-labs.github.io/solana-web3.js/)
+- [Solana Wallet Adapter](https://github.com/solana-labs/wallet-adapter)
+- [SPL Token](https://spl.solana.com/token)
+
+### Additional Tools
+- [Next Themes](https://github.com/pacocoursey/next-themes) - Theme management
+- [React Hot Toast](https://react-hot-toast.com/) - Toast notifications
+- [Date-fns](https://date-fns.org/) - Date manipulation
+- [GSAP](https://greensock.com/gsap/) - Advanced animations
+
+## 🚀 Getting Started
+
+1. Clone the repository:
+```bash
+git clone https://github.com/carbonhub-app/carbonhub-fe.git
+cd carbonhub-fe
+```
+
+2. Install dependencies:
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+```
+
+3. Run the development server:
 ```bash
 npm run dev
 # or
 yarn dev
 # or
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📝 Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
