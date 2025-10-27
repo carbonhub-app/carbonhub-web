@@ -1,3 +1,5 @@
+import Script from "next/script";
+
 export default function Head() {
   return (
     <>
@@ -24,6 +26,12 @@ export default function Head() {
       <link rel="icon" type="image/svg+xml" href="/icon0.svg" />
       <link rel="manifest" href="/manifest.json" />
       <meta name="theme-color" content="#ffffff" />
+      <Script
+          src="https://stat.faizath.com/script.js"
+          data-website-id={process.env.NEXT_PUBLIC_UMAMI_ID}
+          data-domains={process.env.NEXT_PUBLIC_UMAMI_DOMAINS}
+          strategy="afterInteractive"
+      />
       {/* Add more meta tags as needed for PWA or SEO */}
     </>
   );
