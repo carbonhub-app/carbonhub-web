@@ -7,10 +7,12 @@ import SolutionSection from "@/components/landing/SolutionSection";
 import CTASection from "@/components/landing/CTASection";
 import TeamSection from "@/components/landing/TeamSection";
 import FAQSection from "@/components/landing/FAQSection";
+import DomainChangeNotice from "@/components/landing/DomainChangeNotice";
 
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col">
+      <DomainChangeNotice />
       <LandingHeader />
 
       <main className="flex-grow">
