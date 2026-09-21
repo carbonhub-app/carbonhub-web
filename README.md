@@ -61,8 +61,8 @@ CarbonHub is a modern web application built with Next.js that provides a platfor
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/carbonhub-app/carbonhub-fe.git
-cd carbonhub-fe
+git clone https://github.com/carbonhub-app/carbonhub-web.git
+cd carbonhub-web
 ```
 
 2. Install dependencies:
