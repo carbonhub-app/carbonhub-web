@@ -8,35 +8,21 @@ import gsap from "gsap";
 import Image from "next/image";
 import toast, { Toaster } from 'react-hot-toast';
 
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useWalletModal } from '@solana/wallet-adapter-react-ui';
-import dynamic from 'next/dynamic';
+import { useWallet } from "@/context/WalletContext";
+import { useWalletModal } from "@/context/WalletModalContext";
 import { useRouter } from "next/navigation";
 import { accountTypes, ChallengeResponses, VerifyResponses } from "@/types/wallet";
 
-require('@solana/wallet-adapter-react-ui/styles.css');
 
 export default function LandingHeader() {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const [loginDropdownOpen, setLoginDropdownOpen] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
   const loginDropdownRef = useRef<HTMLDivElement>(null);
-  const { publicKey, signMessage, connected, connecting, wallet, disconnect } = useWallet();
+  const { address, signMessage, connected, connecting, disconnect } = useWallet();
   const { setVisible: setWalletModalVisible, visible: walletModalVisible } = useWalletModal();
   const [error, setError] = useState<Error | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    if (!wallet) return;
-    const handleError = (err: unknown) => {
-      const error = err instanceof Error ? err : new Error('Unknown wallet error');
-      setError(error);
-    };
-    wallet.adapter.on('error', handleError);
-    return () => {
-      wallet.adapter.off('error', handleError);
-    };
-  }, [wallet]);
 
   useEffect(() => {
     if (connected) {
@@ -85,7 +71,7 @@ export default function LandingHeader() {
   };
 
   const handleLogin = async (accountType: accountTypes) => {
-    if (!publicKey || !signMessage) {
+    if (!address || !signMessage) {
       setWalletModalVisible(true);
       toast.error('Please connect your wallet first through the "Select Wallet" button.', {
         duration: 5000,
@@ -104,7 +90,7 @@ export default function LandingHeader() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          publicKey: publicKey.toBase58(),
+          publicKey: address,
           type: accountType,
         }),
       });
@@ -123,7 +109,7 @@ export default function LandingHeader() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          publicKey: publicKey.toBase58(),
+          publicKey: address,
           challenge: challengeMessage,
           signature: Buffer.from(signature).toString('base64'),
         }),
@@ -186,7 +172,7 @@ export default function LandingHeader() {
   };
 
   const handleWalletButtonClick = () => {
-    if (connected && publicKey) {
+    if (connected && address) {
       localStorage.removeItem('accountType');
       localStorage.removeItem('userData');
       localStorage.removeItem('token');
@@ -288,7 +274,7 @@ export default function LandingHeader() {
               className="text-white flex items-center gap-2 px-4 py-2 h-10"
             >
               <TbWallet className="text-lg" />
-              {connected && publicKey ? truncateAddress(publicKey.toBase58()) : (connecting ? 'Connecting...' : 'Select Wallet')}
+              {connected && address ? truncateAddress(address) : (connecting ? 'Connecting...' : 'Select Wallet')}
             </Button>
           </div>
 
@@ -377,7 +363,7 @@ export default function LandingHeader() {
                 ) : (
                   <div className="w-full flex flex-col gap-2">
                     <div className="text-white/80 text-sm text-center">
-                      {truncateAddress(publicKey?.toBase58() || "")}
+                      {truncateAddress(address || "")}
                     </div>
                     <Button
                       onClick={handleWalletButtonClick}

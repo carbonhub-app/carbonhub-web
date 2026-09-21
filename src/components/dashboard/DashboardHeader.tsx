@@ -6,13 +6,12 @@ import Image from "next/image";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TbWallet } from "react-icons/tb";
 import { Button } from "@/components/ui/button";
-import { useWallet } from '@solana/wallet-adapter-react';
-import { useWalletModal } from '@solana/wallet-adapter-react-ui';
+import { useWallet } from "@/context/WalletContext";
+import { useWalletModal } from "@/context/WalletModalContext";
 
-require('@solana/wallet-adapter-react-ui/styles.css');
 
 export default function DashboardHeader() {
-  const { publicKey, connecting, connected, disconnect } = useWallet();
+  const { address, connecting, connected, disconnect } = useWallet();
   const { setVisible: setWalletModalVisible, visible: walletModalVisible } = useWalletModal();
 
   const truncateAddress = (address: string) => {
@@ -20,7 +19,7 @@ export default function DashboardHeader() {
   };
 
   const handleWalletButtonClick = () => {
-    if (connected && publicKey) {
+    if (connected && address) {
       // Clear localStorage before disconnecting
       localStorage.removeItem('accountType');
       localStorage.removeItem('userData');
@@ -78,7 +77,7 @@ export default function DashboardHeader() {
               className="bg-primary text-white font-semibold flex items-center gap-2 px-4 py-2 rounded-lg shadow-md hover:bg-primary/90 transition-all duration-200"
             >
               <TbWallet className="text-lg" />
-              {connected && publicKey ? truncateAddress(publicKey.toBase58()) : (connecting ? 'Connecting...' : 'Select Wallet')}
+              {connected && address ? truncateAddress(address) : (connecting ? 'Connecting...' : 'Select Wallet')}
             </Button>
           </div>
         </div>

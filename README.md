@@ -47,9 +47,10 @@ CarbonHub is a modern web application built with Next.js that provides a platfor
 - [Zod](https://zod.dev/) - Schema validation
 
 ### Blockchain Integration
-- [Solana Web3.js](https://solana-labs.github.io/solana-web3.js/)
-- [Solana Wallet Adapter](https://github.com/solana-labs/wallet-adapter)
-- [SPL Token](https://spl.solana.com/token)
+- [Wallet Standard](https://github.com/wallet-standard/wallet-standard) - wallet discovery, connection and signing
+
+All chain interaction happens in the API; the browser only asks the wallet to
+sign the bytes the API produced.
 
 ### Additional Tools
 - [Next Themes](https://github.com/pacocoursey/next-themes) - Theme management

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet } from "@/context/WalletContext";
 import { Slider } from "@/components/ui/slider";
 import toast, { Toaster } from 'react-hot-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -19,7 +19,7 @@ export default function DashboardPage() {
   const [emissionQuota, setEmissionQuota] = useState<EmissionQuota | null>(null);
   const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
-  const { publicKey } = useWallet();
+  const { address } = useWallet();
 
   // Load user data from localStorage on component mount
   useEffect(() => {
@@ -47,7 +47,7 @@ export default function DashboardPage() {
 
   // Fetch user's balance
   const fetchBalance = async () => {
-    if (!publicKey) return;
+    if (!address) return;
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_HOST}/swap/balance`, {
@@ -78,10 +78,10 @@ export default function DashboardPage() {
 
   // Fetch balance on component mount and when wallet changes
   useEffect(() => {
-    if (publicKey) {
+    if (address) {
       fetchBalance();
     }
-  }, [publicKey]);
+  }, [address]);
 
   // Fetch emission quota
   useEffect(() => {
@@ -156,7 +156,7 @@ export default function DashboardPage() {
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span>Connected Wallet:</span>
           <span className="font-mono bg-muted px-2 py-1 rounded">
-            {publicKey ? truncateAddress(publicKey.toBase58()) : "Not connected"}
+            {address ? truncateAddress(address) : "Not connected"}
           </span>
           <span className="px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
             Solana
@@ -294,7 +294,7 @@ export default function DashboardPage() {
                 ready to start tracking and trading carbon credits.
               </p>
               <div className="text-xs text-slate-500 font-mono">
-                {publicKey ? truncateAddress(publicKey.toBase58()) : "N/A"}
+                {address ? truncateAddress(address) : "N/A"}
               </div>
             </div>
 

@@ -1,19 +1,10 @@
 'use client';
 
 import { ThemeProvider } from "@/components/theme-provider";
-import { StagewiseToolbar } from "@stagewise/toolbar-next";
-import { WalletProvider } from '@solana/wallet-adapter-react';
-import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
-import '@solana/wallet-adapter-react-ui/styles.css';
-
-const stagewiseConfig = {
-  plugins: [],
-};
+import { WalletProvider } from "@/context/WalletContext";
+import { WalletModalProvider } from "@/context/WalletModalContext";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-  const wallets = [new PhantomWalletAdapter()];
-
   return (
     <ThemeProvider
       attribute="class"
@@ -21,12 +12,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       enableSystem
       disableTransitionOnChange
     >
-      <WalletProvider wallets={wallets} autoConnect>
+      <WalletProvider>
         <WalletModalProvider>
           {children}
-          {process.env.NODE_ENV === "development" && (
-            <StagewiseToolbar config={stagewiseConfig} />
-          )}
         </WalletModalProvider>
       </WalletProvider>
     </ThemeProvider>

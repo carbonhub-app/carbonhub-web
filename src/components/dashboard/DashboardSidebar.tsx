@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useWallet } from "@/context/WalletContext";
 import { usePathname, useRouter } from "next/navigation";
 
 // Only Trading for user accounts
@@ -139,14 +139,14 @@ type DashboardSidebarProps = {
 };
 
 export default function DashboardSidebar({ thin = false }: DashboardSidebarProps) {
-  const { publicKey } = useWallet();
+  const { address } = useWallet();
   const pathname = usePathname();
   const router = useRouter();
   const [accountType, setAccountType] = React.useState<"user" | "company">("user");
 
   // Load account type from localStorage when wallet is connected
   React.useEffect(() => {
-    if (publicKey) {
+    if (address) {
       const storedAccountType = localStorage.getItem('accountType');
       if (storedAccountType === "company") {
         setAccountType("company");
@@ -154,7 +154,7 @@ export default function DashboardSidebar({ thin = false }: DashboardSidebarProps
         setAccountType("user");
       }
     }
-  }, [publicKey]);
+  }, [address]);
 
   // Force user accounts to only see Trading
   const navItems = accountType === "company" ? companyNavItems : userNavItems;

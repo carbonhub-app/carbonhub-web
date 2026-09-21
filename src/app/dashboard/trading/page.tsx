@@ -2,13 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { useWallet } from "@solana/wallet-adapter-react";
-import { PublicKey, Transaction, VersionedTransaction, Message, VersionedMessage, TransactionInstruction } from "@solana/web3.js";
+import { useWallet } from "@/context/WalletContext";
 import toast, { Toaster } from 'react-hot-toast';
 
-// Token mint addresses
-const EURCH_MINT = new PublicKey("ENzHR75e9uH7WKhE6shHj1jsuu61Wb8wSEUvv9Lry5Kw");
-const ECFCH_MINT = new PublicKey("GYQkEPSYD7m3hKZxcnz7vR3axazX5HifJARC3DU474oQ");
+// Base64 helpers: the wallet signs the exact bytes the api produced.
+const base64ToBytes = (b64: string): Uint8Array =>
+  Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+const bytesToBase64 = (bytes: Uint8Array): string =>
+  btoa(String.fromCharCode(...bytes));
 
 // Token decimals
 const TOKEN_DECIMALS = {
@@ -38,7 +39,7 @@ declare global {
 }
 
 export default function DashboardTradingPage() {
-  const { publicKey, signTransaction, wallet } = useWallet();
+  const { address, signTransaction, wallet } = useWallet();
   const [balance, setBalance] = useState<number | null>(null);
   const [available, setAvailable] = useState<number | null>(null);
   const [orderSize, setOrderSize] = useState<number>(1);
@@ -50,22 +51,22 @@ export default function DashboardTradingPage() {
 
   // Fetch user's balance on component mount and when wallet changes
   useEffect(() => {
-    if (publicKey) {
+    if (address) {
       fetchBalance();
     }
-  }, [publicKey, side]); // Also fetch when side changes
+  }, [address, side]); // Also fetch when side changes
 
   // Fetch price on component mount and periodically
   useEffect(() => {
-    if (publicKey) {
+    if (address) {
       fetchPrice();
       const interval = setInterval(fetchPrice, 5 * 60 * 1000); // Update price every 5 minutes
       return () => clearInterval(interval);
     }
-  }, [publicKey]);
+  }, [address]);
 
   const fetchBalance = async () => {
-    if (!publicKey) return;
+    if (!address) return;
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_HOST}/swap/balance`, {
@@ -120,7 +121,7 @@ export default function DashboardTradingPage() {
   };
 
   const placeOrder = async () => {
-    if (!publicKey || !signTransaction) {
+    if (!address || !signTransaction) {
       toast.error("Please connect your wallet first");
       return;
     }
@@ -145,7 +146,7 @@ export default function DashboardTradingPage() {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({
-          userPublicKey: publicKey.toBase58(),
+          userPublicKey: address,
           fromToken: side === 'buy' ? 'EURCH' : 'ECFCH',
           amount: orderSizeInEURCH,
         }),
@@ -156,13 +157,9 @@ export default function DashboardTradingPage() {
         throw new Error(createData.message || 'Failed to create swap');
       }
 
-      // Get the transaction data and deserialize it
-      const transactionBuffer = Buffer.from(createData.data.transaction, 'base64');
-      const message = VersionedMessage.deserialize(transactionBuffer);
-      const transaction = new VersionedTransaction(message);
-
-      // Sign transaction with user's wallet
-      const signedTransaction = await signTransaction(transaction);
+      // The api hands back a serialised transaction; the wallet signs the bytes
+      // as they are and returns them, so no chain library is needed here.
+      const signedTransaction = await signTransaction(base64ToBytes(createData.data.transaction));
 
       // Execute swap with partially signed transaction
       const executeResponse = await fetch(`${process.env.NEXT_PUBLIC_API_HOST}/swap/execute`, {
@@ -172,7 +169,7 @@ export default function DashboardTradingPage() {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
         body: JSON.stringify({
-          signedTransaction: Buffer.from(signedTransaction.serialize()).toString('base64'),
+          signedTransaction: bytesToBase64(signedTransaction),
           fromToken: side === 'buy' ? 'EURCH' : 'ECFCH',
           amount: orderSizeInEURCH,
         }),
@@ -239,7 +236,7 @@ export default function DashboardTradingPage() {
           <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">
             Place Order
           </h2>
-          {!publicKey ? (
+          {!address ? (
             <div className="text-center py-4">
               <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                 Please connect your wallet to start trading

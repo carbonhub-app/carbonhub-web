@@ -125,7 +125,3 @@
     @apply bg-background text-foreground;
   }
 }
-
-.wallet-adapter-button-trigger {
-  @apply bg-primary text-white font-semibold flex items-center gap-2 px-4 py-2 rounded-lg shadow-md hover:bg-primary/90 transition-all duration-200;
-}
