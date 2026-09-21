@@ -4,7 +4,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { StagewiseToolbar } from "@stagewise/toolbar-next";
 import { WalletProvider } from '@solana/wallet-adapter-react';
 import { WalletModalProvider } from '@solana/wallet-adapter-react-ui';
-import { PhantomWalletAdapter } from '@solana/wallet-adapter-wallets';
+import { PhantomWalletAdapter } from '@solana/wallet-adapter-phantom';
 import '@solana/wallet-adapter-react-ui/styles.css';
 
 const stagewiseConfig = {
