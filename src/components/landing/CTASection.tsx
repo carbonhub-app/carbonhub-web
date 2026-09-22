@@ -65,7 +65,7 @@ const CTASection: React.FC = () => {
               </h2>
               <p className="text-xl text-gray-300 mb-8">
                 Access detailed carbon trading data and monitor{" "}
-                <br className="hidden md:block" /> your company's environmental
+                <br className="hidden md:block" /> your company&apos;s environmental
                 impact on our transparent marketplace.
               </p>{" "}
               <div className="flex flex-col sm:flex-row gap-4">
