@@ -41,10 +41,10 @@ const originalTeam = [
   },
   {
     avatar: "https://imgur.com/6RA9RL6.jpg",
-    name: "Muhammad Faiz",
+    name: "Faiz Atharrahman",
     title: "Backend Developer",
-    linkedin: "",
-    github: "https://github.com/faizathr",
+    linkedin: "https://www.linkedin.com/in/faizath/",
+    github: "https://github.com/faizath",
   },
 ];
 
