@@ -140,12 +140,24 @@ export default function DashboardTradingPage() {
       return;
     }
 
+    if (!price) {
+      toast.error("Waiting for the current price");
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
 
     try {
-      // Convert order size to EURCH if input is in ECFCH
-      const orderSizeInEURCH = inputCurrency === 'ECFCH' ? orderSize * price : orderSize;
+      // The api denominates the amount in the token being sold, which is not
+      // necessarily the one the order was typed in.
+      const fromToken: 'EURCH' | 'ECFCH' = side === 'buy' ? 'EURCH' : 'ECFCH';
+      const amount =
+        inputCurrency === fromToken
+          ? orderSize
+          : fromToken === 'EURCH'
+            ? orderSize * price
+            : orderSize / price;
 
       // Create swap transaction
       const createResponse = await fetch(`${process.env.NEXT_PUBLIC_API_HOST}/swap/create`, {
@@ -156,8 +168,8 @@ export default function DashboardTradingPage() {
         },
         body: JSON.stringify({
           userPublicKey: address,
-          fromToken: side === 'buy' ? 'EURCH' : 'ECFCH',
-          amount: orderSizeInEURCH,
+          fromToken,
+          amount,
         }),
       });
 
@@ -179,8 +191,8 @@ export default function DashboardTradingPage() {
         },
         body: JSON.stringify({
           signedTransaction: bytesToBase64(signedTransaction),
-          fromToken: side === 'buy' ? 'EURCH' : 'ECFCH',
-          amount: orderSizeInEURCH,
+          fromToken,
+          amount,
         }),
       });
 
