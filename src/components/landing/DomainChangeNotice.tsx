@@ -1,25 +1,24 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { FiX } from "react-icons/fi";
+
+import { useHydrated } from "@/hooks/use-hydrated";
+import { useLocalStorageValue, writeLocalStorage } from "@/hooks/use-local-storage";
 
 const STORAGE_KEY = "domain-notice-dismissed";
 
 export default function DomainChangeNotice() {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    if (!localStorage.getItem(STORAGE_KEY)) {
-      setVisible(true);
-    }
-  }, []);
+  // Stays hidden through the prerendered markup and the hydrating render, so a
+  // visitor who already dismissed it never sees it flash back in.
+  const hydrated = useHydrated();
+  const dismissed = useLocalStorageValue(STORAGE_KEY) !== null;
 
   function dismiss() {
-    localStorage.setItem(STORAGE_KEY, "1");
-    setVisible(false);
+    writeLocalStorage(STORAGE_KEY, "1");
   }
 
-  if (!visible) return null;
+  if (!hydrated || dismissed) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">

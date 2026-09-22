@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useHydrated } from "@/hooks/use-hydrated";
 import Image from "next/image";
 import Marquee from "react-fast-marquee";
 
@@ -31,24 +32,11 @@ const logos = [
 ];
 
 export default function MarqueeSection() {
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHydrated();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-    setIsDark(mediaQuery.matches);
-
-    const handler = (e: MediaQueryListEvent) => setIsDark(e.matches);
-    mediaQuery.addEventListener("change", handler);
-    return () => mediaQuery.removeEventListener("change", handler);
-  }, []);
-
-  const gradientColor = isDark ? "rgba(6, 9, 20, 0)" : "rgba(6, 9, 20, 0)";
+  // Both themes resolved to the same fully transparent gradient, so the colour
+  // scheme listener that fed this was doing nothing.
+  const gradientColor = "rgba(6, 9, 20, 0)";
 
   return (
     <section className="relative w-full py-12 bg-transparent dark:bg-transparent overflow-hidden">

@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useWallet } from "@/context/WalletContext";
+import { useLocalStorageValue } from "@/hooks/use-local-storage";
 
 // Only Trading for user accounts
 const userNavItems = [
@@ -139,19 +140,11 @@ type DashboardSidebarProps = {
 
 export default function DashboardSidebar({ thin = false }: DashboardSidebarProps) {
   const { address } = useWallet();
-  const [accountType, setAccountType] = React.useState<"user" | "company">("user");
-
-  // Load account type from localStorage when wallet is connected
-  React.useEffect(() => {
-    if (address) {
-      const storedAccountType = localStorage.getItem('accountType');
-      if (storedAccountType === "company") {
-        setAccountType("company");
-      } else {
-        setAccountType("user");
-      }
-    }
-  }, [address]);
+  // Derived rather than copied into state: the stored value is read straight
+  // from the browser, and only counts once a wallet is connected.
+  const storedAccountType = useLocalStorageValue("accountType");
+  const accountType: "user" | "company" =
+    address && storedAccountType === "company" ? "company" : "user";
 
   // Force user accounts to only see Trading
   const navItems = accountType === "company" ? companyNavItems : userNavItems;
