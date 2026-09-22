@@ -6,7 +6,7 @@ interface TradingViewWidgetProps {
 }
 
 const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({ 
-  symbol = "CAPITALCOM:ECFZ2025" 
+  symbol = "CAPITALCOM:ECFZ2026" 
 }) => {
   const container = useRef<HTMLDivElement>(null);
   const { theme } = useTheme();
