@@ -192,7 +192,6 @@ export default function DashboardTradingPage() {
         body: JSON.stringify({
           signedTransaction: bytesToBase64(signedTransaction),
           fromToken,
-          amount,
         }),
       });
 
