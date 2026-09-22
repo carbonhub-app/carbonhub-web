@@ -18,9 +18,6 @@ const FaQ = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const faqItemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // Clear refs array on each render
-  faqItemRefs.current = [];
-
   const faqItems = [
     {
       question: "How do I start trading carbon credits?",

@@ -73,8 +73,6 @@ const Team: React.FC = () => {
   const progress = useRef(NUM_CLONE_CARDS); // Initial progress points to the start of the actual originalTeam segment
   const isAnimating = useRef(false);
 
-  teamItemRefs.current = [];
-
   useEffect(() => {
     const sectionEl = sectionRef.current;
     const titleEl = titleRef.current;

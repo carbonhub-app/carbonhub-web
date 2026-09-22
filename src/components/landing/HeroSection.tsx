@@ -28,9 +28,6 @@ export default function HeroSection() {
   const featureItemsRef = useRef<HTMLDivElement[]>([]);
   const heroImageRef = useRef<HTMLDivElement>(null);
 
-  // Clear featureItemsRef array on each render
-  featureItemsRef.current = [];
-
   // Add to featureItemsRef function
   const addToFeatureRefs = (el: HTMLDivElement) => {
     if (el && !featureItemsRef.current.includes(el)) {
