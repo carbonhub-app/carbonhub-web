@@ -120,13 +120,11 @@ export default function DashboardTradingPage() {
     };
   }, [address, fetchPrice]);
 
-  // Calculate equivalent amount in the other currency
+  // What the typed amount is worth in the other token. This is a unit
+  // conversion, so it does not depend on which side the order is on.
   const calculateEquivalentAmount = (amount: number): number => {
-    if (side === 'buy') {
-      return inputCurrency === 'EURCH' ? amount / price : amount * price;
-    } else {
-      return inputCurrency === 'EURCH' ? amount * price : amount / price;
-    }
+    if (!price) return 0;
+    return inputCurrency === 'EURCH' ? amount / price : amount * price;
   };
 
   const placeOrder = async () => {
