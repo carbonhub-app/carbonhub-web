@@ -101,12 +101,16 @@ export default function DashboardPage() {
           },
         });
         const data = await response.json();
-        if (data.status === 'success' && data.data.length > 0) {
-          // Get the most recent year's quota
-          setEmissionQuota(data.data[0]);
-        } else {
+        if (data.status !== 'success') {
           throw new Error(data.message || 'Failed to fetch emission quota');
         }
+        // The API returns a row per year in insertion order, so pick the
+        // latest rather than the first. No rows at all is a company that has
+        // not reported yet, which the card renders as an empty state.
+        const [latest] = (data.data as EmissionQuota[])
+          .slice()
+          .sort((a, b) => Number(b.year) - Number(a.year));
+        setEmissionQuota(latest ?? null);
       } catch (error) {
         console.error('Error fetching emission quota:', error);
         toast.error('Failed to fetch emission quota');
