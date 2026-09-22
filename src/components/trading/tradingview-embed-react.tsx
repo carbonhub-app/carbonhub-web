@@ -9,7 +9,7 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({
   symbol = "CAPITALCOM:ECFZ2026" 
 }) => {
   const container = useRef<HTMLDivElement>(null);
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   useEffect(() => {
     if (container.current) {
@@ -25,17 +25,17 @@ const TradingViewWidget: React.FC<TradingViewWidgetProps> = ({
         "symbol": "${symbol}",
         "interval": "D",
         "timezone": "Etc/UTC",
-        "theme": "${theme === 'dark' ? 'dark' : 'light'}",
+        "theme": "${resolvedTheme === 'dark' ? 'dark' : 'light'}",
         "style": "1",
         "locale": "en",
-        "backgroundColor": "${theme === 'dark' ? '#0f172a' : '#ffffff'}",
-        "gridColor": "${theme === 'dark' ? '#334155' : '#e2e8f0'}",
+        "backgroundColor": "${resolvedTheme === 'dark' ? '#0f172a' : '#ffffff'}",
+        "gridColor": "${resolvedTheme === 'dark' ? '#334155' : '#e2e8f0'}",
         "support_host": "https://www.tradingview.com",
         "allow_symbol_change": true,
-        "toolbar_bg": "${theme === 'dark' ? '#1e293b' : '#f8fafc'}"
+        "toolbar_bg": "${resolvedTheme === 'dark' ? '#1e293b' : '#f8fafc'}"
       }`;
     container.current?.appendChild(script);
-  }, [symbol, theme]);
+  }, [symbol, resolvedTheme]);
 
   return (
     <div
