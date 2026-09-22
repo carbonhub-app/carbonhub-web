@@ -12,35 +12,35 @@ if (typeof window !== "undefined") {
 
 const originalTeam = [
   {
-    avatar: "https://imgur.com/GidbcdB.jpg",
+    avatar: "https://github.com/jijiau.png",
     name: "Jihan Aurelia",
     title: "Frontend Developer",
     linkedin: "https://www.linkedin.com/in/jihanaurelia/",
     github: "https://github.com/jijiau",
   },
   {
-    avatar: "https://i.imgur.com/GiAfcdB.jpg",
+    avatar: "https://github.com/Serenadacinta.png",
     name: "Serenada Cinta",
     title: "UI/UX Designer",
     linkedin: "https://www.linkedin.com/in/serenada-cinta-sunindyo-77aa55283/",
     github: "https://github.com/Serenadacinta",
   },
   {
-    avatar: "https://i.imgur.com/3VujJJ3.jpg",
+    avatar: "https://github.com/aththariq.png",
     name: "Aththariq Lisan",
     title: "Frontend Developer",
     linkedin: "https://www.linkedin.com/in/aththariqlisan/",
     github: "https://github.com/aththariq",
   },
   {
-    avatar: "https://imgur.com/gzPRLy3.jpg",
+    avatar: "https://github.com/nasywaanaa.png",
     name: "Nasywaa Anggun",
     title: "Backend Developer",
     linkedin: "https://www.linkedin.com/in/nasywaa-anggun-athiefah/",
     github: "https://github.com/nasywaanaa",
   },
   {
-    avatar: "https://imgur.com/6RA9RL6.jpg",
+    avatar: "https://github.com/faizath.png",
     name: "Faiz Atharrahman",
     title: "Backend Developer",
     linkedin: "https://www.linkedin.com/in/faizath/",
