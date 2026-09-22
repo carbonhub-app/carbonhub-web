@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import dynamic from "next/dynamic";
 import { useWallet } from "@/context/WalletContext";
 import toast, { Toaster } from 'react-hot-toast';
@@ -43,23 +43,7 @@ export default function DashboardTradingPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch user's balance on component mount and when wallet changes
-  useEffect(() => {
-    if (address) {
-      fetchBalance();
-    }
-  }, [address, side]); // Also fetch when side changes
-
-  // Fetch price on component mount and periodically
-  useEffect(() => {
-    if (address) {
-      fetchPrice();
-      const interval = setInterval(fetchPrice, 5 * 60 * 1000); // Update price every 5 minutes
-      return () => clearInterval(interval);
-    }
-  }, [address]);
-
-  const fetchBalance = async () => {
+  const fetchBalance = useCallback(async (isCancelled: () => boolean = () => false) => {
     if (!address) return;
 
     try {
@@ -70,6 +54,7 @@ export default function DashboardTradingPage() {
       });
 
       const data = await response.json();
+      if (isCancelled()) return;
       if (data.status === 'success') {
         // Set balance based on current trading side
         const tokenData = side === 'buy' ? data.data.EURCH : data.data.ECFCH;
@@ -84,9 +69,9 @@ export default function DashboardTradingPage() {
       setBalance(0);
       setAvailable(0);
     }
-  };
+  }, [address, side]);
 
-  const fetchPrice = async () => {
+  const fetchPrice = useCallback(async (isCancelled: () => boolean = () => false) => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_HOST}/swap/price`, {
         headers: {
@@ -94,6 +79,7 @@ export default function DashboardTradingPage() {
         },
       });
       const data = await response.json();
+      if (isCancelled()) return;
       if (data.status === 'success') {
         setPrice(data.data.price);
       } else {
@@ -103,7 +89,36 @@ export default function DashboardTradingPage() {
       console.error('Error fetching price:', err);
       toast.error('Failed to fetch current price');
     }
-  };
+  }, []);
+
+  // The update runs in the async callback rather than the effect body, and a
+  // superseded response is dropped so switching side quickly cannot leave the
+  // slower reply on screen.
+  useEffect(() => {
+    if (!address) return;
+    let cancelled = false;
+    void (async () => {
+      await fetchBalance(() => cancelled);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [address, side, fetchBalance]); // Also fetch when side changes
+
+  // Fetch price on component mount and periodically
+  useEffect(() => {
+    if (!address) return;
+    let cancelled = false;
+    const refresh = async () => {
+      await fetchPrice(() => cancelled);
+    };
+    void refresh();
+    const interval = setInterval(refresh, 5 * 60 * 1000); // Update price every 5 minutes
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [address, fetchPrice]);
 
   // Calculate equivalent amount in the other currency
   const calculateEquivalentAmount = (amount: number): number => {

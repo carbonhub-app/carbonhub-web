@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { useWallet } from "@/context/WalletContext";
 import { Slider } from "@/components/ui/slider";
@@ -8,6 +8,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 import { userDatas } from "@/types/wallet";
+import { useLocalStorageValue } from "@/hooks/use-local-storage";
 
 interface EmissionQuota {
   year: string;
@@ -15,28 +16,27 @@ interface EmissionQuota {
 }
 
 export default function DashboardPage() {
-  const [userData, setUserData] = useState<userDatas | null>(null);
+  // Seeded from the browser rather than copied in through an effect; anything
+  // fetched afterwards takes precedence.
+  const storedUserDataRaw = useLocalStorageValue('userData');
+  const storedUserData = useMemo<userDatas | null>(() => {
+    if (!storedUserDataRaw) return null;
+    try {
+      const parsed = JSON.parse(storedUserDataRaw);
+      if (parsed.connectedAt) parsed.connectedAt = new Date(parsed.connectedAt);
+      return parsed;
+    } catch (error) {
+      console.error('Error parsing user data from localStorage:', error);
+      return null;
+    }
+  }, [storedUserDataRaw]);
+
+  const [fetchedUserData, setUserData] = useState<userDatas | null>(null);
+  const userData = fetchedUserData ?? storedUserData;
   const [emissionQuota, setEmissionQuota] = useState<EmissionQuota | null>(null);
   const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] = useState(false);
   const [withdrawAmount, setWithdrawAmount] = useState<number>(0);
   const { address } = useWallet();
-
-  // Load user data from localStorage on component mount
-  useEffect(() => {
-    const savedData = localStorage.getItem('userData');
-    if (savedData) {
-      try {
-        const parsedData = JSON.parse(savedData);
-        // Convert string dates back to Date objects
-        if (parsedData.connectedAt) {
-          parsedData.connectedAt = new Date(parsedData.connectedAt);
-        }
-        setUserData(parsedData);
-      } catch (error) {
-        console.error('Error parsing user data from localStorage:', error);
-      }
-    }
-  }, []);
 
   // Save user data to localStorage whenever it changes
   useEffect(() => {
@@ -46,7 +46,7 @@ export default function DashboardPage() {
   }, [userData]);
 
   // Fetch user's balance
-  const fetchBalance = async () => {
+  const fetchBalance = useCallback(async (isCancelled: () => boolean = () => false) => {
     if (!address) return;
 
     try {
@@ -57,6 +57,7 @@ export default function DashboardPage() {
       });
 
       const data = await response.json();
+      if (isCancelled()) return;
       if (data.status === 'success') {
         // Update userData with ECFCH balance
         setUserData(prev => {
@@ -74,14 +75,21 @@ export default function DashboardPage() {
       console.error('Error fetching balance:', err);
       toast.error('Failed to fetch token balance');
     }
-  };
-
-  // Fetch balance on component mount and when wallet changes
-  useEffect(() => {
-    if (address) {
-      fetchBalance();
-    }
   }, [address]);
+
+  // Fetch balance on component mount and when wallet changes. The update runs
+  // in the async callback rather than the effect body, and a superseded
+  // response is dropped so a slow reply cannot overwrite a newer balance.
+  useEffect(() => {
+    if (!address) return;
+    let cancelled = false;
+    void (async () => {
+      await fetchBalance(() => cancelled);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [address, fetchBalance]);
 
   // Fetch emission quota
   useEffect(() => {

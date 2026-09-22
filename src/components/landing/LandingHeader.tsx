@@ -21,15 +21,7 @@ export default function LandingHeader() {
   const loginDropdownRef = useRef<HTMLDivElement>(null);
   const { address, signMessage, connected, connecting, disconnect } = useWallet();
   const { setVisible: setWalletModalVisible } = useWalletModal();
-  const [error, setError] = useState<Error | null>(null);
   const router = useRouter();
-
-  useEffect(() => {
-    if (connected) {
-      setError(null);
-      setWalletModalVisible(false);
-    }
-  }, [connected, setWalletModalVisible]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -386,11 +378,6 @@ export default function LandingHeader() {
             </div>
           )}
 
-          {error && (
-            <div className="absolute top-20 left-1/2 transform -translate-x-1/2 bg-red-500/90 text-white px-4 py-2 rounded-lg text-sm max-w-xs text-center">
-              {error.message}
-            </div>
-          )}
         </nav>
       </header>
     </>

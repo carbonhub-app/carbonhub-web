@@ -58,14 +58,29 @@ function Carousel({
     },
     plugins
   )
-  const [canScrollPrev, setCanScrollPrev] = React.useState(false)
-  const [canScrollNext, setCanScrollNext] = React.useState(false)
+  // Whether either direction can scroll is owned by the embla instance, so it
+  // is read from there rather than mirrored into state. The snapshot is packed
+  // into one string so it stays referentially stable between notifications.
+  const subscribeToScroll = React.useCallback(
+    (onChange: () => void) => {
+      if (!api) return () => {}
+      api.on("reInit", onChange)
+      api.on("select", onChange)
+      return () => {
+        api.off("reInit", onChange)
+        api.off("select", onChange)
+      }
+    },
+    [api]
+  )
 
-  const onSelect = React.useCallback((api: CarouselApi) => {
-    if (!api) return
-    setCanScrollPrev(api.canScrollPrev())
-    setCanScrollNext(api.canScrollNext())
-  }, [])
+  const scrollState = React.useSyncExternalStore(
+    subscribeToScroll,
+    () => (api ? `${api.canScrollPrev()}:${api.canScrollNext()}` : "false:false"),
+    () => "false:false"
+  )
+  const canScrollPrev = scrollState.startsWith("true")
+  const canScrollNext = scrollState.endsWith("true")
 
   const scrollPrev = React.useCallback(() => {
     api?.scrollPrev()
@@ -92,17 +107,6 @@ function Carousel({
     if (!api || !setApi) return
     setApi(api)
   }, [api, setApi])
-
-  React.useEffect(() => {
-    if (!api) return
-    onSelect(api)
-    api.on("reInit", onSelect)
-    api.on("select", onSelect)
-
-    return () => {
-      api?.off("select", onSelect)
-    }
-  }, [api, onSelect])
 
   return (
     <CarouselContext.Provider
