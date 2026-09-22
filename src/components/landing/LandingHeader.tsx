@@ -20,7 +20,7 @@ export default function LandingHeader() {
   const headerRef = useRef<HTMLElement>(null);
   const loginDropdownRef = useRef<HTMLDivElement>(null);
   const { address, signMessage, connected, connecting, disconnect } = useWallet();
-  const { setVisible: setWalletModalVisible, visible: walletModalVisible } = useWalletModal();
+  const { setVisible: setWalletModalVisible } = useWalletModal();
   const [error, setError] = useState<Error | null>(null);
   const router = useRouter();
 

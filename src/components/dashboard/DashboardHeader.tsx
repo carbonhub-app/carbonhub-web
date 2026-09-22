@@ -12,7 +12,7 @@ import { useWalletModal } from "@/context/WalletModalContext";
 
 export default function DashboardHeader() {
   const { address, connecting, connected, disconnect } = useWallet();
-  const { setVisible: setWalletModalVisible, visible: walletModalVisible } = useWalletModal();
+  const { setVisible: setWalletModalVisible } = useWalletModal();
 
   const truncateAddress = (address: string) => {
     return `${address.slice(0, 4)}...${address.slice(-4)}`;

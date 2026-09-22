@@ -11,12 +11,6 @@ const base64ToBytes = (b64: string): Uint8Array =>
 const bytesToBase64 = (bytes: Uint8Array): string =>
   btoa(String.fromCharCode(...bytes));
 
-// Token decimals
-const TOKEN_DECIMALS = {
-  EURCH: 6,
-  ECFCH: 3
-};
-
 const TradingViewWidget = dynamic(
   () => import("@/components/trading/tradingview-embed-react"),
   { ssr: false }
@@ -39,7 +33,7 @@ declare global {
 }
 
 export default function DashboardTradingPage() {
-  const { address, signTransaction, wallet } = useWallet();
+  const { address, signTransaction } = useWallet();
   const [balance, setBalance] = useState<number | null>(null);
   const [available, setAvailable] = useState<number | null>(null);
   const [orderSize, setOrderSize] = useState<number>(1);

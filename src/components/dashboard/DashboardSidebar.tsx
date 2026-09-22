@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { useWallet } from "@/context/WalletContext";
-import { usePathname, useRouter } from "next/navigation";
 
 // Only Trading for user accounts
 const userNavItems = [
@@ -140,8 +139,6 @@ type DashboardSidebarProps = {
 
 export default function DashboardSidebar({ thin = false }: DashboardSidebarProps) {
   const { address } = useWallet();
-  const pathname = usePathname();
-  const router = useRouter();
   const [accountType, setAccountType] = React.useState<"user" | "company">("user");
 
   // Load account type from localStorage when wallet is connected
